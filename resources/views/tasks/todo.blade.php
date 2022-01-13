@@ -409,9 +409,7 @@
 
 <body class="antialiased">
     <div class="d-flex align-items-center justify-content-center" id="app">
-        <div class="">
-            <todo-list></todo-list>
-        </div>
+        <todo-list></todo-list>
     </div>
     <footer>
         <script src="{{ mix('/js/app.js') }}"></script>

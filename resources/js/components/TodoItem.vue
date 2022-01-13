@@ -1,10 +1,7 @@
 <template>
-  <div class="card my-2">
-    <div class="">
-      <h2>{{ todo.title }}</h2>
-      <p>{{ todo.description }}</p>
-      <p>Deadline: {{ todo.deadline_at }}</p>
-      <div>
+  <div class="input-group mb-3 container-fluid">
+    <div class="input-group-prepend">
+      <div class="input-group-text">
         <input
           @change="completeTodo"
           v-model="todo.completed_at"
@@ -12,23 +9,45 @@
           id="completed-checkbox"
           name="completed"
         />
-        <label for="completed">Completed</label>
       </div>
-      <button
-        type="button"
-        class="btn btn-outline-danger mb-2"
-        @click="deleteTodo"
-      >
-        Delete todo
+    </div>
+    <div
+      class="card-header w-75"
+      data-toggle="collapse"
+      :href="'#collapse-' + todo.id"
+    >
+      <h5 class="card-title">{{ todo.title }}</h5>
+    </div>
+    <div class="input-group-append">
+      <button type="button" class="btn btn-outline-danger" @click="deleteTodo">
+        Delete
       </button>
-      <button
-        type="button"
-        class="btn btn-outline-secondary mb-2"
-        data-toggle="modal"
-        data-target="#todoForm"
-      >
-        Edit
-      </button>
+    </div>
+    <div class="w-75">
+      <div class="collapse card-body" :id="'collapse-' + todo.id">
+        <p>{{ todo.description }}</p>
+        <p>Deadline: {{ todo.deadline_at }}</p>
+        <div>
+          <input
+            @change="completeTodo"
+            v-model="todo.completed_at"
+            type="checkbox"
+            id="completed-checkbox"
+            name="completed"
+          />
+          <label for="completed">Completed</label>
+        </div>
+
+        <button
+          type="button"
+          class="btn btn-outline-secondary mb-2"
+          data-toggle="modal"
+          data-target="#todoForm"
+          @click="populateModalData"
+        >
+          Edit
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -40,20 +59,6 @@ export default {
       type: Object,
       required: true,
     },
-    modalData: {
-      type: Object,
-      required: true,
-    },
-    highlightedTodoId: {
-      type: Number,
-      required: false,
-    },
-  },
-
-  data() {
-    return {
-      isEditing: false,
-    };
   },
 
   methods: {
@@ -62,9 +67,14 @@ export default {
     },
     //should this be split out into one for edit and one for complete?
     completeTodo() {
+      this.populateModalData();
       const isoDate = new Date().toISOString();
       this.todo.completed_at = isoDate.slice(0, 19).replace("T", " ");
       this.$emit("complete-todo", this.todo);
+    },
+
+    populateModalData() {
+      this.$emit("populate-modal-data", this.todo);
     },
   },
 };

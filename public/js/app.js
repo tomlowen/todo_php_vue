@@ -2100,25 +2100,31 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     todo: {
       type: Object,
       required: true
-    },
-    modalData: {
-      type: Object,
-      required: true
-    },
-    highlightedTodoId: {
-      type: Number,
-      required: false
     }
-  },
-  data: function data() {
-    return {
-      isEditing: false
-    };
   },
   methods: {
     deleteTodo: function deleteTodo() {
@@ -2126,9 +2132,13 @@ __webpack_require__.r(__webpack_exports__);
     },
     //should this be split out into one for edit and one for complete?
     completeTodo: function completeTodo() {
+      this.populateModalData();
       var isoDate = new Date().toISOString();
       this.todo.completed_at = isoDate.slice(0, 19).replace("T", " ");
       this.$emit("complete-todo", this.todo);
+    },
+    populateModalData: function populateModalData() {
+      this.$emit("populate-modal-data", this.todo);
     }
   }
 });
@@ -2273,6 +2283,18 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   components: {
@@ -2298,6 +2320,12 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     });
   },
   methods: {
+    populateModalData: function populateModalData(data) {
+      this.highlightedTodoId = data.id;
+      this.modalData.titleText = data.title;
+      this.modalData.descriptionText = data.description;
+      this.modalData.deadlineDate = data.deadline_at.slice(0, 10); //   this.modalData.completedDate = data.completed_at.slice(0, 10);
+    },
     clearModalData: function clearModalData() {
       this.modalData.titleText = "";
       this.modalData.descriptionText = "";
@@ -2326,15 +2354,14 @@ function _arrayLikeToArray(arr, len) { if (len == null || len > arr.length) len 
     updateTodo: function updateTodo(todo) {
       var _this4 = this;
 
-      axios.put("/api/tasks/" + todo.id, {
-        todo: todo
-      }).then(function (response) {
+      console.log(todo);
+      axios.put("/api/tasks/" + this.highlightedTodoId, todo).then(function (response) {
         return _this4.todos = _this4.todos.map(function (obj) {
           return response.data.id === obj.id ? response.data : obj;
         });
       });
+      this.clearModalData();
     },
-    //this needs to be written
     submitFormData: function submitFormData() {
       var apiData = {
         title: this.modalData.titleText,
@@ -19987,15 +20014,9 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div", { staticClass: "card my-2" }, [
-    _c("div", {}, [
-      _c("h2", [_vm._v(_vm._s(_vm.todo.title))]),
-      _vm._v(" "),
-      _c("p", [_vm._v(_vm._s(_vm.todo.description))]),
-      _vm._v(" "),
-      _c("p", [_vm._v("Deadline: " + _vm._s(_vm.todo.deadline_at))]),
-      _vm._v(" "),
-      _c("div", [
+  return _c("div", { staticClass: "input-group mb-3 container-fluid" }, [
+    _c("div", { staticClass: "input-group-prepend" }, [
+      _c("div", { staticClass: "input-group-text" }, [
         _c("input", {
           directives: [
             {
@@ -20043,31 +20064,112 @@ var render = function () {
             ],
           },
         }),
-        _vm._v(" "),
-        _c("label", { attrs: { for: "completed" } }, [_vm._v("Completed")]),
       ]),
-      _vm._v(" "),
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      {
+        staticClass: "card-header w-75",
+        attrs: { "data-toggle": "collapse", href: "#collapse-" + _vm.todo.id },
+      },
+      [
+        _c("h5", { staticClass: "card-title" }, [
+          _vm._v(_vm._s(_vm.todo.title)),
+        ]),
+      ]
+    ),
+    _vm._v(" "),
+    _c("div", { staticClass: "input-group-append" }, [
       _c(
         "button",
         {
-          staticClass: "btn btn-outline-danger mb-2",
+          staticClass: "btn btn-outline-danger",
           attrs: { type: "button" },
           on: { click: _vm.deleteTodo },
         },
-        [_vm._v("\n      Delete todo\n    ")]
+        [_vm._v("\n      Delete\n    ")]
       ),
-      _vm._v(" "),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "w-75" }, [
       _c(
-        "button",
+        "div",
         {
-          staticClass: "btn btn-outline-secondary mb-2",
-          attrs: {
-            type: "button",
-            "data-toggle": "modal",
-            "data-target": "#todoForm",
-          },
+          staticClass: "collapse card-body",
+          attrs: { id: "collapse-" + _vm.todo.id },
         },
-        [_vm._v("\n      Edit\n    ")]
+        [
+          _c("p", [_vm._v(_vm._s(_vm.todo.description))]),
+          _vm._v(" "),
+          _c("p", [_vm._v("Deadline: " + _vm._s(_vm.todo.deadline_at))]),
+          _vm._v(" "),
+          _c("div", [
+            _c("input", {
+              directives: [
+                {
+                  name: "model",
+                  rawName: "v-model",
+                  value: _vm.todo.completed_at,
+                  expression: "todo.completed_at",
+                },
+              ],
+              attrs: {
+                type: "checkbox",
+                id: "completed-checkbox",
+                name: "completed",
+              },
+              domProps: {
+                checked: Array.isArray(_vm.todo.completed_at)
+                  ? _vm._i(_vm.todo.completed_at, null) > -1
+                  : _vm.todo.completed_at,
+              },
+              on: {
+                change: [
+                  function ($event) {
+                    var $$a = _vm.todo.completed_at,
+                      $$el = $event.target,
+                      $$c = $$el.checked ? true : false
+                    if (Array.isArray($$a)) {
+                      var $$v = null,
+                        $$i = _vm._i($$a, $$v)
+                      if ($$el.checked) {
+                        $$i < 0 &&
+                          _vm.$set(_vm.todo, "completed_at", $$a.concat([$$v]))
+                      } else {
+                        $$i > -1 &&
+                          _vm.$set(
+                            _vm.todo,
+                            "completed_at",
+                            $$a.slice(0, $$i).concat($$a.slice($$i + 1))
+                          )
+                      }
+                    } else {
+                      _vm.$set(_vm.todo, "completed_at", $$c)
+                    }
+                  },
+                  _vm.completeTodo,
+                ],
+              },
+            }),
+            _vm._v(" "),
+            _c("label", { attrs: { for: "completed" } }, [_vm._v("Completed")]),
+          ]),
+          _vm._v(" "),
+          _c(
+            "button",
+            {
+              staticClass: "btn btn-outline-secondary mb-2",
+              attrs: {
+                type: "button",
+                "data-toggle": "modal",
+                "data-target": "#todoForm",
+              },
+              on: { click: _vm.populateModalData },
+            },
+            [_vm._v("\n        Edit\n      ")]
+          ),
+        ]
       ),
     ]),
   ])
@@ -20095,269 +20197,291 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c(
-    "div",
-    { staticClass: "card" },
-    [
-      _c("h1", [_vm._v("Todo App")]),
-      _vm._v(" "),
-      _c("div", [
-        _c("form", { staticClass: "form-inline" }, [
-          _c("div", { staticClass: "form-group mx-sm-3 mb-2" }, [
-            _c(
-              "label",
-              { staticClass: "sr-only", attrs: { for: "titleInput" } },
-              [_vm._v("Add new todo item")]
-            ),
+  return _c("div", { staticClass: "container" }, [
+    _c(
+      "div",
+      { staticClass: "card" },
+      [
+        _c("h1", { staticClass: "m-2" }, [_vm._v("Todo App")]),
+        _vm._v(" "),
+        _c("div", [
+          _c("form", { staticClass: "form-inline" }, [
+            _c("div", { staticClass: "form-group mx-sm-3 mb-2" }, [
+              _c(
+                "label",
+                { staticClass: "sr-only", attrs: { for: "titleInput" } },
+                [_vm._v("Add new todo item")]
+              ),
+              _vm._v(" "),
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.modalData.titleText,
+                    expression: "modalData.titleText",
+                  },
+                ],
+                staticClass: "form-control",
+                attrs: {
+                  id: "titleInput",
+                  type: "text",
+                  placeholder: "Add new todo item",
+                },
+                domProps: { value: _vm.modalData.titleText },
+                on: {
+                  input: function ($event) {
+                    if ($event.target.composing) {
+                      return
+                    }
+                    _vm.$set(_vm.modalData, "titleText", $event.target.value)
+                  },
+                },
+              }),
+            ]),
             _vm._v(" "),
-            _c("input", {
-              directives: [
-                {
-                  name: "model",
-                  rawName: "v-model",
-                  value: _vm.modalData.titleText,
-                  expression: "modalData.titleText",
-                },
-              ],
-              staticClass: "form-control",
-              attrs: {
-                id: "titleInput",
-                type: "text",
-                placeholder: "Add new todo item",
-              },
-              domProps: { value: _vm.modalData.titleText },
-              on: {
-                input: function ($event) {
-                  if ($event.target.composing) {
-                    return
-                  }
-                  _vm.$set(_vm.modalData, "titleText", $event.target.value)
+            _c(
+              "button",
+              {
+                staticClass: "btn btn-primary mb-2",
+                attrs: {
+                  type: "button",
+                  "data-toggle": "modal",
+                  "data-target": "#todoForm",
                 },
               },
-            }),
+              [_vm._v("\n          +\n        ")]
+            ),
           ]),
-          _vm._v(" "),
-          _c(
-            "button",
-            {
-              staticClass: "btn btn-primary mb-2",
-              attrs: {
-                type: "button",
-                "data-toggle": "modal",
-                "data-target": "#todoForm",
-              },
-            },
-            [_vm._v("\n        +\n      ")]
-          ),
         ]),
-      ]),
-      _vm._v(" "),
-      _c(
-        "div",
-        {
-          staticClass: "modal fade",
-          attrs: {
-            id: "todoForm",
-            tabindex: "-1",
-            role: "dialog",
-            "aria-labelledby": "todoFormLabel",
-            "aria-hidden": "true",
+        _vm._v(" "),
+        _c(
+          "div",
+          {
+            staticClass: "modal fade",
+            attrs: {
+              id: "todoForm",
+              "data-backdrop": "static",
+              "data-keyboard": "false",
+              tabindex: "-1",
+              role: "dialog",
+              "aria-labelledby": "todoFormLabel",
+              "aria-hidden": "true",
+            },
           },
-        },
-        [
-          _c(
-            "div",
-            { staticClass: "modal-dialog", attrs: { role: "document" } },
-            [
-              _c("div", { staticClass: "modal-content" }, [
-                _vm._m(0),
-                _vm._v(" "),
-                _c("div", { staticClass: "modal-body" }, [
-                  _c("form", [
-                    _c("div", { staticClass: "form-group" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-form-label",
-                          attrs: { for: "title-name" },
-                        },
-                        [_vm._v("Title:")]
-                      ),
-                      _vm._v(" "),
-                      _c("input", {
-                        directives: [
+          [
+            _c(
+              "div",
+              { staticClass: "modal-dialog", attrs: { role: "document" } },
+              [
+                _c("div", { staticClass: "modal-content" }, [
+                  _c("div", { staticClass: "modal-header" }, [
+                    _vm.highlightedTodoId
+                      ? _c(
+                          "h5",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.modalData.titleText,
-                            expression: "modalData.titleText",
+                            staticClass: "modal-title",
+                            attrs: { id: "todoFormLabel" },
                           },
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "text", id: "title-text" },
-                        domProps: { value: _vm.modalData.titleText },
-                        on: {
-                          input: function ($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.modalData,
-                              "titleText",
-                              $event.target.value
-                            )
+                          [_vm._v("\n              Edit todo\n            ")]
+                        )
+                      : _c(
+                          "h5",
+                          {
+                            staticClass: "modal-title",
+                            attrs: { id: "todoFormLabel" },
                           },
-                        },
-                      }),
-                    ]),
+                          [_vm._v("New todo")]
+                        ),
                     _vm._v(" "),
-                    _c("div", { staticClass: "form-group" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-form-label",
-                          attrs: { for: "description-text" },
-                        },
-                        [_vm._v("Description:")]
-                      ),
-                      _vm._v(" "),
-                      _c("textarea", {
-                        directives: [
+                    _vm._m(0),
+                  ]),
+                  _vm._v(" "),
+                  _c("div", { staticClass: "modal-body" }, [
+                    _c("form", [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "label",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.modalData.descriptionText,
-                            expression: "modalData.descriptionText",
+                            staticClass: "col-form-label",
+                            attrs: { for: "title-name" },
                           },
-                        ],
-                        staticClass: "form-control",
-                        attrs: { id: "description-text" },
-                        domProps: { value: _vm.modalData.descriptionText },
-                        on: {
-                          input: function ($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.modalData,
-                              "descriptionText",
-                              $event.target.value
-                            )
+                          [_vm._v("Title:")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.modalData.titleText,
+                              expression: "modalData.titleText",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "text", id: "title-text" },
+                          domProps: { value: _vm.modalData.titleText },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.modalData,
+                                "titleText",
+                                $event.target.value
+                              )
+                            },
                           },
-                        },
-                      }),
-                    ]),
-                    _vm._v(" "),
-                    _c("div", { staticClass: "form-group" }, [
-                      _c(
-                        "label",
-                        {
-                          staticClass: "col-form-label",
-                          attrs: { for: "deadline-date" },
-                        },
-                        [_vm._v("Deadline:")]
-                      ),
+                        }),
+                      ]),
                       _vm._v(" "),
-                      _c("input", {
-                        directives: [
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "label",
                           {
-                            name: "model",
-                            rawName: "v-model",
-                            value: _vm.modalData.deadlineDate,
-                            expression: "modalData.deadlineDate",
+                            staticClass: "col-form-label",
+                            attrs: { for: "description-text" },
                           },
-                        ],
-                        staticClass: "form-control",
-                        attrs: { type: "date", id: "deadline-date" },
-                        domProps: { value: _vm.modalData.deadlineDate },
-                        on: {
-                          input: function ($event) {
-                            if ($event.target.composing) {
-                              return
-                            }
-                            _vm.$set(
-                              _vm.modalData,
-                              "deadlineDate",
-                              $event.target.value
-                            )
+                          [_vm._v("Description:")]
+                        ),
+                        _vm._v(" "),
+                        _c("textarea", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.modalData.descriptionText,
+                              expression: "modalData.descriptionText",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          attrs: { id: "description-text" },
+                          domProps: { value: _vm.modalData.descriptionText },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.modalData,
+                                "descriptionText",
+                                $event.target.value
+                              )
+                            },
                           },
-                        },
-                      }),
+                        }),
+                      ]),
+                      _vm._v(" "),
+                      _c("div", { staticClass: "form-group" }, [
+                        _c(
+                          "label",
+                          {
+                            staticClass: "col-form-label",
+                            attrs: { for: "deadline-date" },
+                          },
+                          [_vm._v("Deadline:")]
+                        ),
+                        _vm._v(" "),
+                        _c("input", {
+                          directives: [
+                            {
+                              name: "model",
+                              rawName: "v-model",
+                              value: _vm.modalData.deadlineDate,
+                              expression: "modalData.deadlineDate",
+                            },
+                          ],
+                          staticClass: "form-control",
+                          attrs: { type: "date", id: "deadline-date" },
+                          domProps: { value: _vm.modalData.deadlineDate },
+                          on: {
+                            input: function ($event) {
+                              if ($event.target.composing) {
+                                return
+                              }
+                              _vm.$set(
+                                _vm.modalData,
+                                "deadlineDate",
+                                $event.target.value
+                              )
+                            },
+                          },
+                        }),
+                      ]),
                     ]),
                   ]),
-                ]),
-                _vm._v(" "),
-                _c("div", { staticClass: "modal-footer" }, [
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-secondary",
-                      attrs: { type: "button", "data-dismiss": "modal" },
-                    },
-                    [_vm._v("\n            Cancel\n          ")]
-                  ),
                   _vm._v(" "),
-                  _c(
-                    "button",
-                    {
-                      staticClass: "btn btn-primary",
-                      attrs: { type: "button", "data-dismiss": "modal" },
-                      on: { click: _vm.submitFormData },
-                    },
-                    [_vm._v("\n            Save\n          ")]
-                  ),
+                  _c("div", { staticClass: "modal-footer" }, [
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-secondary",
+                        attrs: { type: "button", "data-dismiss": "modal" },
+                        on: { click: _vm.clearModalData },
+                      },
+                      [_vm._v("\n              Cancel\n            ")]
+                    ),
+                    _vm._v(" "),
+                    _c(
+                      "button",
+                      {
+                        staticClass: "btn btn-primary",
+                        attrs: { type: "button", "data-dismiss": "modal" },
+                        on: { click: _vm.submitFormData },
+                      },
+                      [_vm._v("\n              Save\n            ")]
+                    ),
+                  ]),
                 ]),
-              ]),
-            ]
-          ),
-        ]
-      ),
-      _vm._v(" "),
-      _vm._l(_vm.todos, function (todo) {
-        return _c("todo-item", {
-          key: todo.id,
-          attrs: {
-            todo: todo,
-            modalData: _vm.modalData,
-            highlightedTodoId: _vm.highlightedTodoId,
-          },
-          on: {
-            "delete-todo": function ($event) {
-              return _vm.deleteTodo($event)
+              ]
+            ),
+          ]
+        ),
+        _vm._v(" "),
+        _vm._l(_vm.todos, function (todo) {
+          return _c("todo-item", {
+            key: todo.id,
+            attrs: {
+              todo: todo,
+              modalData: _vm.modalData,
+              highlightedTodoId: _vm.highlightedTodoId,
             },
-            "complete-todo": function ($event) {
-              return _vm.updateTodo($event)
+            on: {
+              "delete-todo": function ($event) {
+                return _vm.deleteTodo($event)
+              },
+              "complete-todo": function ($event) {
+                return _vm.updateTodo($event)
+              },
+              "populate-modal-data": function ($event) {
+                return _vm.populateModalData($event)
+              },
             },
-          },
-        })
-      }),
-    ],
-    2
-  )
+          })
+        }),
+      ],
+      2
+    ),
+  ])
 }
 var staticRenderFns = [
   function () {
     var _vm = this
     var _h = _vm.$createElement
     var _c = _vm._self._c || _h
-    return _c("div", { staticClass: "modal-header" }, [
-      _c("h5", { staticClass: "modal-title", attrs: { id: "todoFormLabel" } }, [
-        _vm._v("New todo"),
-      ]),
-      _vm._v(" "),
-      _c(
-        "button",
-        {
-          staticClass: "close",
-          attrs: {
-            type: "button",
-            "data-dismiss": "modal",
-            "aria-label": "Close",
-          },
+    return _c(
+      "button",
+      {
+        staticClass: "close",
+        attrs: {
+          type: "button",
+          "data-dismiss": "modal",
+          "aria-label": "Close",
         },
-        [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
-      ),
-    ])
+      },
+      [_c("span", { attrs: { "aria-hidden": "true" } }, [_vm._v("×")])]
+    )
   },
 ]
 render._withStripped = true
