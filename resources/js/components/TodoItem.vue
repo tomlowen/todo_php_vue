@@ -1,19 +1,34 @@
 <template>
-  <div class="mt-8 bg-white overflow-hidden shadow sm:rounded-lg">
-    <div class="grid grid-cols-1">
+  <div class="card my-2">
+    <div class="">
       <h2>{{ todo.title }}</h2>
       <p>{{ todo.description }}</p>
       <p>Deadline: {{ todo.deadline_at }}</p>
       <div>
         <input
-          @change="updateTodo"
+          @change="completeTodo"
+          v-model="todo.completed_at"
           type="checkbox"
           id="completed-checkbox"
           name="completed"
         />
         <label for="completed">Completed</label>
       </div>
-      <button @click="deleteTodo">Delete todo</button>
+      <button
+        type="button"
+        class="btn btn-outline-danger mb-2"
+        @click="deleteTodo"
+      >
+        Delete todo
+      </button>
+      <button
+        type="button"
+        class="btn btn-outline-secondary mb-2"
+        data-toggle="modal"
+        data-target="#todoForm"
+      >
+        Edit
+      </button>
     </div>
   </div>
 </template>
@@ -25,6 +40,20 @@ export default {
       type: Object,
       required: true,
     },
+    modalData: {
+      type: Object,
+      required: true,
+    },
+    highlightedTodoId: {
+      type: Number,
+      required: false,
+    },
+  },
+
+  data() {
+    return {
+      isEditing: false,
+    };
   },
 
   methods: {
@@ -32,10 +61,10 @@ export default {
       this.$emit("delete-todo", this.todo.id);
     },
     //should this be split out into one for edit and one for complete?
-    updateTodo() {
-        // set the completed_at property to now  - NEEDS SORTING
-      this.todo.completed_at = new Date(now());
-      this.$emit("update-todo", this.todo);
+    completeTodo() {
+      const isoDate = new Date().toISOString();
+      this.todo.completed_at = isoDate.slice(0, 19).replace("T", " ");
+      this.$emit("complete-todo", this.todo);
     },
   },
 };
