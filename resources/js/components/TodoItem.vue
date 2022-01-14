@@ -26,10 +26,10 @@
         Delete
       </button>
     </div>
-    <div class="w-75">
+    <div class="w-75 ml-4">
       <div class="collapse card-body" :id="'collapse-' + todo.id">
         <p>{{ todo.description }}</p>
-        <p>Deadline: {{ todo.deadline_at }}</p>
+        <p>Deadline: {{ displayDeadline }}</p>
         <div>
           <input
             @change="completeTodo"
@@ -38,7 +38,11 @@
             id="completed-checkbox"
             name="completed"
           />
-          <label for="completed">Completed</label>
+          <label for="completed">{{
+            todo.completed_at
+              ? "Completed on " + displayCompleted
+              : "Mark as completed"
+          }}</label>
         </div>
 
         <button
@@ -61,6 +65,16 @@ export default {
     todo: {
       type: Object,
       required: true,
+    },
+  },
+
+  computed: {
+    displayDeadline() {
+      return new Date(this.todo.deadline_at).toDateString();
+    },
+
+    displayCompleted() {
+      return new Date(this.todo.completed_at).toDateString();
     },
   },
 

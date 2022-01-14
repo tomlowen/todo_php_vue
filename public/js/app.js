@@ -2122,11 +2122,23 @@ __webpack_require__.r(__webpack_exports__);
 //
 //
 //
+//
+//
+//
+//
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   props: {
     todo: {
       type: Object,
       required: true
+    }
+  },
+  computed: {
+    displayDeadline: function displayDeadline() {
+      return new Date(this.todo.deadline_at).toDateString();
+    },
+    displayCompleted: function displayCompleted() {
+      return new Date(this.todo.completed_at).toDateString();
     }
   },
   methods: {
@@ -20134,7 +20146,7 @@ var render = function () {
         ),
       ]),
       _vm._v(" "),
-      _c("div", { staticClass: "w-75" }, [
+      _c("div", { staticClass: "w-75 ml-4" }, [
         _c(
           "div",
           {
@@ -20144,7 +20156,7 @@ var render = function () {
           [
             _c("p", [_vm._v(_vm._s(_vm.todo.description))]),
             _vm._v(" "),
-            _c("p", [_vm._v("Deadline: " + _vm._s(_vm.todo.deadline_at))]),
+            _c("p", [_vm._v("Deadline: " + _vm._s(_vm.displayDeadline))]),
             _vm._v(" "),
             _c("div", [
               _c("input", {
@@ -20200,7 +20212,13 @@ var render = function () {
               }),
               _vm._v(" "),
               _c("label", { attrs: { for: "completed" } }, [
-                _vm._v("Completed"),
+                _vm._v(
+                  _vm._s(
+                    _vm.todo.completed_at
+                      ? "Completed on " + _vm.displayCompleted
+                      : "Mark as completed"
+                  )
+                ),
               ]),
             ]),
             _vm._v(" "),
