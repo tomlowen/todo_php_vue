@@ -1,5 +1,8 @@
 <template>
-  <div class="input-group mb-3 container-fluid">
+  <div
+    class="input-group mb-3 container-fluid"
+    :class="{ 'text-black-50': todo.completed_at }"
+  >
     <div class="input-group-prepend">
       <div class="input-group-text">
         <input

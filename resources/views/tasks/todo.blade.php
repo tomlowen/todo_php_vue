@@ -408,7 +408,7 @@
 </head>
 
 <body class="antialiased">
-    <div class="d-flex align-items-center justify-content-center" id="app">
+    <div class="d-flex h-100 align-items-center" id="app">
         <todo-list></todo-list>
     </div>
     <footer>
