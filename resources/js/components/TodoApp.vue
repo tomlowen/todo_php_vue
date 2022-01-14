@@ -125,131 +125,17 @@
             </div>
           </div>
         </div>
-        <Todo-item
-          v-bind:key="todo.id"
-          v-bind:todo="todo"
-          v-bind:modalData="modalData"
-          v-bind:highlightedTodoId="highlightedTodoId"
-          v-for="todo in outstandingTodos"
-          @delete-todo="deleteTodo($event)"
-          @complete-todo="updateTodo($event)"
-          @populate-modal-data="populateModalData($event)"
-        ></Todo-item>
-        <hr v-show="completedTodos.length > 0" class="divider" />
-        <h5 v-show="completedTodos.length > 0" class="card-title ml-3">
-          Completed tasks
-        </h5>
-        <Todo-item
-          v-bind:key="todo.id"
-          v-bind:todo="todo"
-          v-bind:modalData="modalData"
-          v-bind:highlightedTodoId="highlightedTodoId"
-          v-for="todo in completedTodos"
-          @delete-todo="deleteTodo($event)"
-          @complete-todo="updateTodo($event)"
-          @populate-modal-data="populateModalData($event)"
-        ></Todo-item>
       </div>
     </div>
   </div>
 </template>
 
 <script>
-import TodoItem from "./TodoItem.vue";
+import TodoList from "./TodoList.vue";
 
 export default {
   components: {
-    TodoItem,
-  },
-
-  data() {
-    return {
-      highlightedTodoId: 0,
-      modalData: {
-        titleText: "",
-        descriptionText: "",
-        deadlineDate: "",
-        completedDate: "",
-      },
-      todos: [],
-    };
-  },
-
-  mounted() {
-    axios.get("/api/tasks").then((response) => (this.todos = response.data));
-  },
-
-  computed: {
-    completedTodos() {
-      return this.todos.filter((todo) => todo.completed_at);
-    },
-    outstandingTodos() {
-      return this.todos.filter((todo) => !todo.completed_at);
-    },
-  },
-
-  methods: {
-    populateModalData(data) {
-      this.highlightedTodoId = data.id;
-      this.modalData.titleText = data.title;
-      this.modalData.descriptionText = data.description;
-      this.modalData.deadlineDate = data.deadline_at.slice(0, 10);
-      //   this.modalData.completedDate = data.completed_at.slice(0, 10);
-    },
-
-    clearModalData() {
-      this.modalData.titleText = "";
-      this.modalData.descriptionText = "";
-      this.modalData.deadlineDate = "";
-      this.modalData.completedDate = "";
-      this.highlightedTodoId = 0;
-    },
-
-    createTodo(todo) {
-      console.log(todo);
-      axios
-        .post("/api/tasks", todo)
-        .then((response) => (this.todos = [response.data, ...this.todos]))
-        .then(() => console.log(this.todos));
-    },
-
-    deleteTodo(todoId) {
-      axios
-        .delete("/api/tasks/" + todoId)
-        .then(
-          () => (this.todos = this.todos.filter((todo) => todoId !== todo.id))
-        );
-    },
-
-    updateTodo(todo) {
-      console.log(todo);
-      axios
-        .put("/api/tasks/" + this.highlightedTodoId, todo)
-        .then(
-          (response) =>
-            (this.todos = this.todos.map((obj) =>
-              response.data.id === obj.id ? response.data : obj
-            ))
-        );
-      this.clearModalData();
-    },
-
-    submitFormData() {
-      const apiData = {
-        title: this.modalData.titleText,
-        description: this.modalData.descriptionText,
-        deadline_at: this.modalData.deadlineDate,
-        completed_at: this.modalData.completedDate,
-      };
-      if (this.modalData.titleText.length > 0) {
-        if (!this.highlightedTodoId) {
-          this.createTodo(apiData);
-        } else {
-          this.updateTodo(apiData);
-        }
-        this.clearModalData();
-      }
-    },
+    TodoList,
   },
 };
 </script>

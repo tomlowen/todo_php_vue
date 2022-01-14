@@ -14,3 +14,7 @@ body {
 .todo-item {
   padding: 20px;
 }
+
+div {
+  border: 1px solid black;
+}
