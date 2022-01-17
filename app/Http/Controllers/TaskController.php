@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
 use Illuminate\Http\Request;
@@ -22,24 +23,14 @@ class TaskController extends Controller
     /**
      * Store a newly created resource in storage.
      *
+     * @param  \App\Http\Requests\CreateTaskRequest  $request
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(CreateTaskRequest $request)
     {
-        $validated = $request->validate([
-            'title' => 'required|max:255',
-            'description' => 'max:255',
-            'deadline_at' => 'max:255',
-            'completed_at' => 'max:255'
-        ]);
 
-        $task = Task::create([
-            'title' => $validated['title'],
-            'description' => $validated['description'],
-            'deadline_at' => $validated['deadline_at'],
-            'completed_at' => $validated['completed_at'],
-        ]);
+        $task = Task::create($request);
 
         return response()->json($task, 201);
     }

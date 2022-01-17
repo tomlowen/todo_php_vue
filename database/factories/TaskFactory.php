@@ -15,6 +15,7 @@ class TaskFactory extends Factory
     {
         return [
             'title' => $this->faker->sentence(),
+            'category' => $this->faker->word(),
             'description' => $this->faker->paragraph(),
             'deadline_at' => $this->faker->dateTimeThisMonth()
         ];
