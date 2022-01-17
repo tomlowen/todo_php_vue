@@ -2,9 +2,10 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\CategoryRequest;
-use Illuminate\Http\Request;
+use App\Http\Requests\UpdateCategoryRequest;
 use App\Models\Category;
+use Illuminate\Http\Request;
+
 
 
 class CategoryController extends Controller
@@ -23,14 +24,22 @@ class CategoryController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\CategoryRequest  $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(CategoryRequest $request)
+    public function store(Request $request)
     {
-        $category = Category::create($request);
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'color' => 'nullable|max:255',
+        ]);
 
-        return response()->json($category, 201);
+        $task = Category::create([
+            'name' => $validated['name'],
+            'color' => $validated['color'],
+        ]);
+
+        return response()->json($task, 201);
     }
 
     /**
@@ -47,11 +56,11 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\CategoryRequest  $request
+     * @param  \App\Http\Requests\UpdateCategoryRequest  $request
      * @param  \App\Models\Task  $task
      * @return \Illuminate\Http\Response
      */
-    public function update(CategoryRequest $request, Category $category)
+    public function update(UpdateCategoryRequest $request, Category $category)
     {
         $category->update($request->validated());
 

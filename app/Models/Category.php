@@ -11,7 +11,7 @@ class Category extends Model
 
     protected $fillable = [
         'name',
-        'colour',
+        'color',
     ];
 
     public function tasks()
