@@ -30,7 +30,6 @@ class UpdateTaskRequest extends FormRequest
                 'max:255',
                 Rule::unique('tasks')->ignore($this->route('task')->id),
             ],
-            'category' => 'max:255',
             'description' => 'nullable|max:255',
             'deadline_at' => 'nullable|date',
             'completed_at' => 'nullable|date',

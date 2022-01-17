@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Http\Requests\CreateTaskRequest;
 use App\Http\Requests\UpdateTaskRequest;
 use App\Models\Task;
-use Illuminate\Http\Request;
 
 class TaskController extends Controller
 {
@@ -24,12 +23,10 @@ class TaskController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \App\Http\Requests\CreateTaskRequest  $request
-     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(CreateTaskRequest $request)
     {
-
         $task = Task::create($request);
 
         return response()->json($task, 201);

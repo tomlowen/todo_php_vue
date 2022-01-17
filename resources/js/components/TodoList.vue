@@ -1,6 +1,7 @@
+
 <template>
   <div class="container">
-    <div class="card d-flex align-items-center mt-5">
+    <div class="card d-flex align-items-center">
       <div>
         <h1 class="m-3">Todo App</h1>
         <div>
@@ -55,77 +56,64 @@
                   <span aria-hidden="true">&times;</span>
                 </button>
               </div>
-              <validation-observer v-slot="{ invalid }">
-                <div class="modal-body">
-                  <form>
-                    <div class="form-group">
-                      <label for="title-name" class="col-form-label"
-                        >Title:</label
-                      >
-                      <validation-provider rules="required" v-slot="{ errors }">
-                        <input
-                          name="Title"
-                          type="text"
-                          class="form-control"
-                          id="title-text"
-                          v-model="modalData.titleText"
-                        />
-                        <div
-                          v-show="errors[0]"
-                          class="alert alert-danger"
-                          role="alert"
-                        >
-                          {{ errors[0] }}
-                        </div>
-                      </validation-provider>
-                    </div>
-                    <div class="form-group">
-                      <label for="description-text" class="col-form-label"
-                        >Description:</label
-                      >
-                      <textarea
-                        class="form-control"
-                        id="description-text"
-                        v-model="modalData.descriptionText"
-                      ></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label for="deadline-date" class="col-form-label"
-                        >Deadline:</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="deadline-date"
-                        v-model="modalData.deadlineDate"
-                      />
-                    </div>
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                    @click="clearModalData"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    :disabled="invalid"
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                    @click="submitFormData"
-                  >
-                    Save
-                  </button>
-                </div>
-              </validation-observer>
+              <div class="modal-body">
+                <form>
+                  <div class="form-group">
+                    <label for="title-name" class="col-form-label"
+                      >Title:</label
+                    >
+                    <input
+                      type="text"
+                      class="form-control"
+                      id="title-text"
+                      v-model="modalData.titleText"
+                    />
+                  </div>
+                  <div class="form-group">
+                    <label for="description-text" class="col-form-label"
+                      >Description:</label
+                    >
+                    <textarea
+                      class="form-control"
+                      id="description-text"
+                      v-model="modalData.descriptionText"
+                    ></textarea>
+                  </div>
+                  <div class="form-group">
+                    <label for="deadline-date" class="col-form-label"
+                      >Deadline:</label
+                    >
+                    <input
+                      type="date"
+                      class="form-control"
+                      id="deadline-date"
+                      v-model="modalData.deadlineDate"
+                    />
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-dismiss="modal"
+                  @click="clearModalData"
+                >
+                  Cancel
+                </button>
+                <button
+                  type="button"
+                  class="btn btn-primary"
+                  data-dismiss="modal"
+                  @click="submitFormData"
+                >
+                  Save
+                </button>
+              </div>
             </div>
           </div>
         </div>
-        <Todo-item
+        <todo-item
           v-bind:key="todo.id"
           v-bind:todo="todo"
           v-bind:modalData="modalData"
@@ -134,12 +122,12 @@
           @delete-todo="deleteTodo($event)"
           @complete-todo="updateTodo($event)"
           @populate-modal-data="populateModalData($event)"
-        ></Todo-item>
-        <hr v-show="completedTodos.length > 0" class="divider" />
-        <h5 v-show="completedTodos.length > 0" class="card-title ml-3">
+        ></todo-item>
+        <hr v-if="completedTodos.length > 0" class="divider" />
+        <h5 v-if="completedTodos.length > 0" class="card-title ml-3">
           Completed tasks
         </h5>
-        <Todo-item
+        <todo-item
           v-bind:key="todo.id"
           v-bind:todo="todo"
           v-bind:modalData="modalData"
@@ -148,7 +136,7 @@
           @delete-todo="deleteTodo($event)"
           @complete-todo="updateTodo($event)"
           @populate-modal-data="populateModalData($event)"
-        ></Todo-item>
+        ></todo-item>
       </div>
     </div>
   </div>
@@ -202,7 +190,6 @@ export default {
       this.modalData.descriptionText = "";
       this.modalData.deadlineDate = "";
       this.modalData.completedDate = "";
-      this.highlightedTodoId = 0;
     },
 
     createTodo(todo) {
