@@ -1,128 +1,111 @@
 <template>
-  <div class="container">
-    <div class="card d-flex align-items-center mt-5">
-      <div>
+  <div class="container m-5">
+    <div class="card d-flex align-items-center">
+      <div class="container">
         <h1 class="m-3">Todo App</h1>
         <div>
-          <form class="form-inline my-3">
-            <div class="form-group mx-sm-3 mb-2">
-              <label for="titleInput" class="sr-only">Add new todo item</label>
-              <input
-                id="titleInput"
-                v-model="modalData.titleText"
-                type="text"
-                class="form-control"
-                placeholder="Add new todo item"
-              />
-            </div>
-            <button
-              type="button"
-              class="btn btn-primary mb-2 ml-2"
-              data-toggle="modal"
-              data-target="#todoForm"
-            >
-              +
-            </button>
-          </form>
-        </div>
-        <div
-          class="modal fade"
-          id="todoForm"
-          data-backdrop="static"
-          data-keyboard="false"
-          tabindex="-1"
-          role="dialog"
-          aria-labelledby="todoFormLabel"
-          aria-hidden="true"
-        >
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5
-                  v-if="highlightedTodoId"
-                  class="modal-title"
-                  id="todoFormLabel"
+          <validation-observer v-slot="{ invalid }">
+            <form class="form-inline my-3">
+              <div class="form-group mx-sm-3 mb-2">
+                <label for="categoryInput" class="sr-only"
+                  >Add new category</label
                 >
-                  Edit todo
-                </h5>
-                <h5 v-else class="modal-title" id="todoFormLabel">New todo</h5>
-                <button
-                  type="button"
-                  class="close"
-                  data-dismiss="modal"
-                  aria-label="Close"
-                >
-                  <span aria-hidden="true">&times;</span>
-                </button>
+                <validation-provider rules="required" v-slot="{ errors }">
+                  <input
+                    name="Category"
+                    type="text"
+                    class="form-control"
+                    id="categoryInput"
+                    placeholder="Add new category"
+                    v-model="nameText"
+                  />
+                  <div
+                    v-show="errors[0]"
+                    class="alert alert-danger"
+                    role="alert"
+                  >
+                    {{ errors[0] }}
+                  </div>
+                </validation-provider>
               </div>
-              <validation-observer v-slot="{ invalid }">
-                <div class="modal-body">
-                  <form>
-                    <div class="form-group">
-                      <label for="title-name" class="col-form-label"
-                        >Title:</label
-                      >
-                      <validation-provider rules="required" v-slot="{ errors }">
-                        <input
-                          name="Title"
-                          type="text"
-                          class="form-control"
-                          id="title-text"
-                          v-model="modalData.titleText"
-                        />
-                        <div
-                          v-show="errors[0]"
-                          class="alert alert-danger"
-                          role="alert"
-                        >
-                          {{ errors[0] }}
-                        </div>
-                      </validation-provider>
-                    </div>
-                    <div class="form-group">
-                      <label for="description-text" class="col-form-label"
-                        >Description:</label
-                      >
-                      <textarea
-                        class="form-control"
-                        id="description-text"
-                        v-model="modalData.descriptionText"
-                      ></textarea>
-                    </div>
-                    <div class="form-group">
-                      <label for="deadline-date" class="col-form-label"
-                        >Deadline:</label
-                      >
-                      <input
-                        type="date"
-                        class="form-control"
-                        id="deadline-date"
-                        v-model="modalData.deadlineDate"
-                      />
-                    </div>
-                  </form>
-                </div>
-                <div class="modal-footer">
-                  <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-dismiss="modal"
-                    @click="clearModalData"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    :disabled="invalid"
-                    type="button"
-                    class="btn btn-primary"
-                    data-dismiss="modal"
-                    @click="submitFormData"
-                  >
-                    Save
-                  </button>
-                </div>
-              </validation-observer>
-            </div>
+              <button
+                :disabled="invalid"
+                type="button"
+                class="btn btn-primary mb-2 ml-2"
+              >
+                +
+              </button>
+            </form>
+          </validation-observer>
+        </div>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link active"
+              id="home-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#home"
+              type="button"
+              role="tab"
+              aria-controls="home"
+              aria-selected="true"
+            >
+              Home
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="profile-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#profile"
+              type="button"
+              role="tab"
+              aria-controls="profile"
+              aria-selected="false"
+            >
+              Profile
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button
+              class="nav-link"
+              id="contact-tab"
+              data-bs-toggle="tab"
+              data-bs-target="#contact"
+              type="button"
+              role="tab"
+              aria-controls="contact"
+              aria-selected="false"
+            >
+              Contact
+            </button>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <div
+            class="tab-pane fade show active"
+            id="home"
+            role="tabpanel"
+            aria-labelledby="home-tab"
+          >
+            <!-- <todo-list v-bind="lists"></todo-list> -->
+          </div>
+          <div
+            class="tab-pane fade"
+            id="profile"
+            role="tabpanel"
+            aria-labelledby="profile-tab"
+          >
+            <!-- <todo-list></todo-list> -->
+          </div>
+          <div
+            class="tab-pane fade"
+            id="contact"
+            role="tabpanel"
+            aria-labelledby="contact-tab"
+          >
+            <!-- <todo-list></todo-list> -->
           </div>
         </div>
       </div>
@@ -137,5 +120,39 @@ export default {
   components: {
     TodoList,
   },
+
+  data() {
+    return {
+      lists: [],
+      categories: [],
+      highlightedCategoryId: 0,
+      nameText: "",
+      colorText: "",
+    };
+  },
+
+  mounted() {
+    // axios
+    //   .get("/api/categories")
+    //   .then((response) => (this.categories = response.data));
+    axios.get("/api/tasks").then((response) => (this.lists = response.data));
+    // .then((response) => (this.lists = response.data))
+    // .then(console.log(this.lists));
+  },
+
+  // handleSubmitCategory() {
+  //   const apiData = {
+  //     name: this.nameText,
+  //     color: colorText,
+  //   };
+  //   if (this.nameText.length > 0) {
+  //     if (!this.highlightedCategoryId) {
+  //       this.createCategory(apiData);
+  //     } else {
+  //       this.updateCategory(apiData);
+  //       this.highlightedCategoryId = 0;
+  //     }
+  //   }
+  // },
 };
 </script>
