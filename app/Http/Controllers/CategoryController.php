@@ -79,4 +79,10 @@ class CategoryController extends Controller
 
         return response()->json(null, 204);
     }
+
+    public function aggregate()
+    {
+        //for each category, return number of tasks.
+        return response()->json(null, 204);
+    }
 }

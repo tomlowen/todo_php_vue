@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\TaskController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\TaskStatsController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -19,5 +20,8 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // });
 
-Route::resource('tasks', TaskController::class);
-Route::resource('categories', CategoryController::class);
+Route::prefix('tasks/stats')->group(function () {
+    Route::get('/', [TaskStatsController::class, 'index']);
+});
+Route::apiResource('tasks', TaskController::class);
+Route::apiResource('categories', CategoryController::class);
